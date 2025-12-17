@@ -1,36 +1,99 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Secret Santa</title>
-  <style>
-    body { font-family: Arial, sans-serif; padding: 24px; }
-    input { padding: 8px; width: 220px; }
-    button { padding: 8px 12px; margin-left: 6px; }
-  </style>
+    <meta charset="UTF-8" />
+    <title>🎁 Secret Santa</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+            background: 
+                linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55)),
+                url("girls.jpg") center / cover no-repeat;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card {
+            background: white;
+            padding: 30px 25px;
+            width: 90%;
+            max-width: 350px;
+            border-radius: 16px;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        h1 {
+            margin-bottom: 10px;
+        }
+
+        p {
+            color: #555;
+            font-size: 14px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin-top: 15px;
+            border-radius: 10px;
+            border: 1px solid #ccc;
+            font-size: 15px;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 15px;
+            background: #ff4757;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #e84118;
+        }
+
+        #result {
+            margin-top: 15px;
+            font-size: 14px;
+        }
+    </style>
 </head>
 <body>
-  <h2>🎁 Aldığın hediyeyi yaz</h2>
 
-  <input id="giftInput" placeholder="örn: gloss" />
-  <button onclick="sendGift()">Gönder</button>
+<div class="card">
+    <h1>🎄 Secret Santa</h1>
+    <p>Aldığın hediyeyi yaz, aynı şey alınmasın 🎁</p>
 
-  <p id="result"></p>
+    <input id="gift" placeholder="Hediye ne aldın?" />
+    <button onclick="sendGift()">Gönder</button>
 
-  <script>
-    async function sendGift() {
-      const gift = document.getElementById("giftInput").value;
+    <div id="result"></div>
+</div>
 
-      const res = await fetch("/add-gift", {
+<script>
+async function sendGift() {
+    const gift = document.getElementById("gift").value;
+    const result = document.getElementById("result");
+
+    const res = await fetch("/add-gift", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ gift })
-      });
+    });
 
-      const data = await res.json();
-      document.getElementById("result").innerText = data.message;
-    }
-  </script>
+    const data = await res.json();
+    result.innerText = data.message;
+}
+</script>
+
 </body>
 </html>
