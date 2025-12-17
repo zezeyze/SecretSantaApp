@@ -59,22 +59,80 @@ app.MapGet("/admin", () =>
     var filePath = "gifts.json";
 
     if (!System.IO.File.Exists(filePath))
-        return Results.Text("Henüz hiç hediye girilmemiş.");
+        return Results.Content(AdminHtml(new List<string>()), "text/html");
 
     var json = System.IO.File.ReadAllText(filePath);
     var gifts = System.Text.Json.JsonSerializer.Deserialize<List<string>>(json) ?? new();
 
-    var html = "<h2>🎁 Girilen Hediyeler</h2><ul>";
-
-    foreach (var gift in gifts)
-    {
-        html += $"<li>{gift}</li>";
-    }
-
-    html += "</ul>";
-
-    return Results.Content(html, "text/html");
+    return Results.Content(AdminHtml(gifts), "text/html");
 });
+
+string AdminHtml(List<string> gifts)
+{
+    var listItems = gifts.Count == 0
+        ? "<p>Henüz hiç hediye girilmemiş 🎁</p>"
+        : string.Join("", gifts.Select(g => $"<li>{g}</li>"));
+
+    return $@"
+<!DOCTYPE html>
+<html lang='tr'>
+<head>
+    <meta charset='UTF-8'>
+    <title>Secret Santa – Admin</title>
+    <style>
+        body {{
+            font-family: Arial, sans-serif;
+            background: #f5f6fa;
+            display: flex;
+            justify-content: center;
+            padding-top: 50px;
+        }}
+        .card {{
+            background: white;
+            width: 400px;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }}
+        h2 {{
+            text-align: center;
+            margin-bottom: 20px;
+        }}
+        ul {{
+            list-style: none;
+            padding: 0;
+        }}
+        li {{
+            background: #f1f2f6;
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 500;
+        }}
+        .count {{
+            text-align: center;
+            margin-top: 15px;
+            color: #555;
+            font-size: 14px;
+        }}
+    </style>
+</head>
+<body>
+    <div class='card'>
+        <h2>🎁 Girilen Hediyeler</h2>
+        <ul>
+            {listItems}
+        </ul>
+        <div class='count'>
+            Toplam: {gifts.Count} hediye
+        </div>
+    </div>
+</body>
+</html>
+";
+}
+
 app.Run();
 
 record GiftRequest(string Gift);
