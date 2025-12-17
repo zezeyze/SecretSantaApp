@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Secret Santa</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 24px; }
+    input { padding: 8px; width: 220px; }
+    button { padding: 8px 12px; margin-left: 6px; }
+  </style>
+</head>
+<body>
+  <h2>🎁 Aldığın hediyeyi yaz</h2>
+
+  <input id="giftInput" placeholder="örn: gloss" />
+  <button onclick="sendGift()">Gönder</button>
+
+  <p id="result"></p>
+
+  <script>
+    async function sendGift() {
+      const gift = document.getElementById("giftInput").value;
+
+      const res = await fetch("/add-gift", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ gift })
+      });
+
+      const data = await res.json();
+      document.getElementById("result").innerText = data.message;
+    }
+  </script>
+</body>
+</html>
