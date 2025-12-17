@@ -54,6 +54,27 @@ app.MapPost("/add-gift", (GiftRequest body) =>
     });
 });
 
+app.MapGet("/admin", () =>
+{
+    var filePath = "gifts.json";
+
+    if (!System.IO.File.Exists(filePath))
+        return Results.Text("Henüz hiç hediye girilmemiş.");
+
+    var json = System.IO.File.ReadAllText(filePath);
+    var gifts = System.Text.Json.JsonSerializer.Deserialize<List<string>>(json) ?? new();
+
+    var html = "<h2>🎁 Girilen Hediyeler</h2><ul>";
+
+    foreach (var gift in gifts)
+    {
+        html += $"<li>{gift}</li>";
+    }
+
+    html += "</ul>";
+
+    return Results.Content(html, "text/html");
+});
 app.Run();
 
 record GiftRequest(string Gift);
